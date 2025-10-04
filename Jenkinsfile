@@ -3,12 +3,12 @@ pipeline {
   stages {
     stage('Policy Check - Conftest') {
       steps {
-        sh 'conftest test --policy ../lab1-conftest/policies ../lab1-conftest/manifests/deployment-insecure.yaml'
+        sh 'conftest test --policy ./lab1-conftest/policies ./lab1-conftest/manifests/deployment-insecure.yaml'
       }
     }
     stage('Policy Check - Checkov') {
       steps {
-        sh 'checkov -d ../lab2-checkov/terraform'
+        sh 'checkov -d ./lab2-checkov/terraform'
       }
     }
   }
