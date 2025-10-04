@@ -1,0 +1,7 @@
+[
+	{
+		"filename": "manifests/deployment-secure.yaml",
+		"namespace": "main",
+		"successes": 4
+	}
+]

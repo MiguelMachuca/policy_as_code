@@ -1,0 +1,15 @@
+[
+	{
+		"filename": "manifests/deployment-insecure.yaml",
+		"namespace": "main",
+		"successes": 2,
+		"failures": [
+			{
+				"msg": "Container myapp must have securityContext defined"
+			},
+			{
+				"msg": "Deployment must have securityContext defined at pod level"
+			}
+		]
+	}
+]
