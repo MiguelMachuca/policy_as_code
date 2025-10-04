@@ -10,7 +10,7 @@ pipeline {
                         
                         sh '''
                             echo "Ejecutando Conftest..."
-                            docker run --rm -v $WORKSPACE:/project -w /project openpolicyagent/conftest test /project/lab1-conftest/manifests/deployment-insecure.yaml --policy /project/lab1-conftest/policies
+                            docker run --rm -v $WORKSPACE:/project -w /project/lab1-conftest openpolicyagent/conftest test ./manifests/deployment-insecure.yaml --policy ./policies
                         '''
                     } catch (hudson.AbortException e) {
                         echo "Error de Conftest: ${e.message}"
