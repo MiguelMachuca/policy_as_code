@@ -8,7 +8,7 @@ pipeline {
                         // Comando principal con diagnóstico integrado
                         sh '''
                             echo "Ejecutando Conftest..."
-                            docker run --rm -v $WORKSPACE:/project -w /project openpolicyagent/conftest test /project/lab1-conftest/manifests/deployment-insecure.yaml --policy /project/lab1-conftest/policies
+                            docker run --rm -v $WORKSPACE:/project -w /project openpolicyagent/conftest test ./lab1-conftest/manifests/deployment-insecure.yaml --policy ./lab1-conftest/policies
                         '''
                     } catch (hudson.AbortException e) {
                         echo "Error de Conftest: ${e.message}"
@@ -25,7 +25,7 @@ pipeline {
         stage('Policy Check - Checkov') {
             steps {
                 sh '''
-                    docker run --rm -v $WORKSPACE:/project bridgecrew/checkov:latest -d /project/lab2-checkov/terraform
+                    docker run --rm -v $WORKSPACE:/project bridgecrew/checkov:latest -d ./lab2-checkov/terraform
                 '''
             }
         }
