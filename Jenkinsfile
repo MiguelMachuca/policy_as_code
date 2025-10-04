@@ -16,9 +16,15 @@ pipeline {
       }
     }
     stage('Policy Check - Conftest') {
-      steps {
-        sh '''docker run --rm -v $(pwd):/project -w /project openpolicyagent/conftest test --policy ./lab1-conftest/policies ./lab1-conftest/manifests/deployment-insecure.yaml'''
-      }
+        steps {
+            sh 'ls -la' // Lists in Jenkins workspace
+            sh '''
+                docker run --rm -v $(pwd):/project -w /project openpolicyagent/conftest ls -la /project/lab1-conftest/manifests/
+            '''
+            sh '''
+                docker run --rm -v $(pwd):/project -w /project openpolicyagent/conftest test --policy /project/lab1-conftest/policies /project/lab1-conftest/manifests/deployment-insecure.yaml
+            '''
+        }
     }
     stage('Policy Check - Checkov') {
       steps {
