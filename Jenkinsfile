@@ -1,7 +1,6 @@
 pipeline {
     agent any
     stages {
-    stages {
         stage('Policy Check - Conftest') {
             steps {
                 script {
