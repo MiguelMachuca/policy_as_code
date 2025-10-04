@@ -5,8 +5,10 @@ pipeline {
       steps {
         sh 'ls -la'
         sh 'pwd'
-        // Using -w to set the working directory in the container
-        sh '''docker run --rm -v $(pwd):/project -w /project openpolicyagent/conftest test --policy ./lab1-conftest/policies ./lab1-conftest/manifests/deployment-insecure.yaml'''
+        sh 'ls -la ./lab1-conftest/manifests/deployment-insecure.yaml'
+        sh '''
+        docker run --rm -v $(pwd):/project -w /project openpolicyagent/conftest test ./lab1-conftest/manifests/deployment-insecure.yaml --policy ./lab1-conftest/policies 
+        '''
       }
     }
     stage('Policy Check - Checkov') {
