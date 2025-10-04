@@ -1,22 +1,31 @@
 pipeline {
     agent any
     stages {
+    stages {
         stage('Policy Check - Conftest') {
             steps {
                 script {
                     try {
-                        // Comando principal con diagnóstico integrado
+                        // Pequeña pausa para asegurar montaje del volumen
+                        sleep 2
+                        
                         sh '''
                             echo "Ejecutando Conftest..."
-                            docker run --rm -v $WORKSPACE:/project -w /project openpolicyagent/conftest test ./lab1-conftest/manifests/deployment-insecure.yaml --policy ./lab1-conftest/policies
+                            docker run --rm -v $WORKSPACE:/project -w /project openpolicyagent/conftest test /project/lab1-conftest/manifests/deployment-insecure.yaml --policy /project/lab1-conftest/policies
                         '''
                     } catch (hudson.AbortException e) {
                         echo "Error de Conftest: ${e.message}"
-                        // Ejecutar diagnóstico automáticamente en caso de error
+                        
+                        // Diagnóstico automático MEJORADO
                         sh '''
-                            echo "=== DIAGNÓSTICO AUTOMÁTICO ==="
+                            echo "=== DIAGNÓSTICO DETALLADO ==="
+                            echo "Workspace: $WORKSPACE"
+                            echo "=== Estructura desde contenedor ==="
                             docker run --rm -v $WORKSPACE:/project -w /project alpine find /project -name "*.yaml" -o -name "*.rego"
+                            echo "=== Contenido de lab1-conftest ==="
+                            docker run --rm -v $WORKSPACE:/project -w /project alpine ls -la /project/lab1-conftest/
                         '''
+                        
                         error("Parando la pipeline por error en Conftest")
                     }
                 }
