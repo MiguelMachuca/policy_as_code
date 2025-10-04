@@ -7,7 +7,10 @@ pipeline {
                     try {
                         // Pequeña pausa para asegurar montaje del volumen
                         sleep 2
-                        
+                        sh 'echo "=== Estructura COMPLETA del workspace en Jenkins ==="'
+                        sh 'find . -type f -name "*.yaml" -o -name "*.rego" | head -20'
+                        sh 'echo "=== Contenido de lab1-conftest en Jenkins ==="'
+                        sh 'ls -la lab1-conftest/'
                         sh '''
                             echo "Ejecutando Conftest..."
                             docker run --rm -v $WORKSPACE:/project -w /project/lab1-conftest openpolicyagent/conftest test ./manifests/deployment-insecure.yaml --policy ./policies
