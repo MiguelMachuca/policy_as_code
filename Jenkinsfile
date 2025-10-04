@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('Policy Check - Conftest') {
       steps {
-        sh '''docker run --rm -v $(pwd):/project openpolicyagent/conftest test --policy lab1-conftest/policies lab1-conftest/manifests/deployment-insecure.yaml'''
+        sh '''docker run --rm -v $(pwd):/project openpolicyagent/conftest test --policy /lab1-conftest/policies /lab1-conftest/manifests/deployment-insecure.yaml'''
       }
     }
     stage('Policy Check - Checkov') {
