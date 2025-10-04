@@ -1,34 +1,41 @@
 pipeline {
-  agent any
-  stages {
-    stage('Policy Check - Conftest') {
-        steps {
-            sh 'pwd -P'
-            sh 'ls -la'
-            sh 'pwd'
-            sh 'ls -la ./lab1-conftest/manifests/deployment-insecure.yaml'
-            sh 'ls -la /var/jenkins_home/workspace/Lab3-2/lab1-conftest/manifests/'
-            sh 'id' 
-            
-            // Comando corregido para diagnóstico
-            sh '''
-            docker run --rm -v $WORKSPACE:/project -w /project alpine ls -la /project/lab1-conftest/manifests/
-            '''
-            
-            // Comando principal corregido para Conftest
-            sh '''
-            docker run --rm -v $WORKSPACE:/project -w /project openpolicyagent/conftest test /project/lab1-conftest/manifests/deployment-insecure.yaml --policy /project/lab1-conftest/policies 
-            '''
+    agent any
+    stages {
+        stage('Policy Check - Conftest') {
+            steps {
+                script {
+                    try {
+                        // Comando principal con diagnóstico integrado
+                        sh '''
+                            echo "Ejecutando Conftest..."
+                            docker run --rm -v $WORKSPACE:/project -w /project openpolicyagent/conftest test /project/lab1-conftest/manifests/deployment-insecure.yaml --policy /project/lab1-conftest/policies
+                        '''
+                    } catch (hudson.AbortException e) {
+                        echo "Error de Conftest: ${e.message}"
+                        // Ejecutar diagnóstico automáticamente en caso de error
+                        sh '''
+                            echo "=== DIAGNÓSTICO AUTOMÁTICO ==="
+                            docker run --rm -v $WORKSPACE:/project -w /project alpine find /project -name "*.yaml" -o -name "*.rego"
+                        '''
+                        error("Parando la pipeline por error en Conftest")
+                    }
+                }
+            }
+        }
+        stage('Policy Check - Checkov') {
+            steps {
+                sh '''
+                    docker run --rm -v $WORKSPACE:/project bridgecrew/checkov:latest -d /project/lab2-checkov/terraform
+                '''
+            }
         }
     }
-    stage('Policy Check - Checkov') {
-      steps {
-        // Comando corregido para Checkov
-        sh '''docker run --rm -v $WORKSPACE:/project bridgecrew/checkov:latest -d /project/lab2-checkov/terraform'''
-      }
+    post {
+        always { 
+            echo 'Policy checks completed' 
+        }
+        failure {
+            echo 'La pipeline falló - revisa los diagnósticos arriba'
+        }
     }
-  }
-  post {
-    always { echo 'Policy checks completed' }
-  }
 }
